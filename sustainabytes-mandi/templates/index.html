@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#183c2b">
+    <title>SustainaBytes Mandi | Queue</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #1d2b24;
+            --muted: #647269;
+            --green: #24583d;
+            --green-dark: #183c2b;
+            --green-pale: #e8f1e9;
+            --sun: #efc35a;
+            --paper: #f4f5ef;
+            --white: #fff;
+            --line: #dce3da;
+            --red: #9b352b;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background: var(--paper);
+            font-family: Aptos, "Trebuchet MS", sans-serif;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 72px;
+            padding: 0 max(6vw, 24px);
+            border-bottom: 1px solid var(--line);
+            background: var(--white);
+        }
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .brand-mark {
+            display: grid;
+            width: 38px;
+            aspect-ratio: 1;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--green-dark);
+            background: var(--sun);
+            font-size: 19px;
+        }
+        .top-note { color: var(--green); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+        main { width: min(1160px, calc(100% - 64px)); margin: 46px auto 72px; }
+        .intro { position: relative; min-height: 220px; overflow: hidden; display: flex; align-items: center; margin-bottom: 22px; padding: 26px 28px; border: 1px solid #d6e0d1; border-radius: 7px; background: #e7efe4; }
+        .intro-copy { position: relative; z-index: 2; width: 58%; }
+        .farmer-scene { position: absolute; inset: 0 0 0 auto; width: 47%; overflow: hidden; background: linear-gradient(180deg, #dce8df 0 50%, #a9bd7a 50% 62%, #748e50 62% 100%); }
+        .farmer-scene::before { position: absolute; right: -8%; bottom: -13px; left: -8%; height: 85px; background: repeating-linear-gradient(172deg, transparent 0 13px, #d6df9e 14px 17px, transparent 18px 30px), linear-gradient(#758d4d, #607b43); content: ""; }
+        .farmer-scene::after { position: absolute; inset: 0 auto 0 0; width: 30%; background: linear-gradient(90deg, #e7efe4, transparent); content: ""; }
+        .farmer-character { position: absolute; z-index: 1; bottom: 45px; left: 7%; font-size: 45px; line-height: 1; filter: drop-shadow(0 3px 1px #172f2b25); animation: farmer-stroll 12s ease-in-out infinite alternate; }
+        @keyframes farmer-stroll { from { transform: translateX(0) translateY(0); } to { transform: translateX(min(32vw, 330px)) translateY(-3px); } }
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 9px;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .eyebrow::before { width: 8px; height: 8px; border-radius: 50%; background: var(--sun); content: ""; }
+        h1, h2, p { margin-top: 0; }
+        h1 { margin-bottom: 8px; font-family: Georgia, "Times New Roman", serif; font-size: 42px; font-weight: 500; line-height: 1.12; }
+        h1 span { color: var(--green); }
+        .intro p:last-child { margin-bottom: 0; color: var(--muted); }
+        .market-status { display: inline-flex; align-items: center; gap: 12px; min-width: 220px; margin-top: 16px; padding: 10px 13px; border: 1px solid var(--line); border-left: 4px solid var(--sun); background: var(--white); }
+        .status-check { display: grid; width: 34px; aspect-ratio: 1; place-items: center; border-radius: 50%; color: var(--green); background: var(--green-pale); font-weight: 800; }
+        .market-status strong, .market-status small { display: block; }
+        .market-status strong { margin-bottom: 3px; font-size: 13px; }
+        .market-status small { color: var(--muted); font-size: 12px; }
+        .columns { display: grid; grid-template-columns: 1.08fr .92fr; gap: 20px; align-items: start; }
+        .panel { overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--white); box-shadow: 0 8px 24px #1d2b2408; }
+        .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+        .panel-heading h2 { margin: 0; font-size: 18px; }
+        .queue-heading-actions { display: flex; align-items: center; gap: 14px; }
+        .queue-total { color: var(--muted); font-size: 12px; }
+        .queue-total strong { color: var(--green); font-size: 16px; }
+        .current { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 24px; color: var(--white); background: var(--green-dark); }
+        .current-label { margin-bottom: 6px; color: #d3e2d4; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+        .current-crop { margin: 0; font-size: 15px; font-weight: 650; }
+        .token-number { color: var(--sun); font-size: 44px; font-weight: 800; line-height: 1; }
+        .queue-list { margin: 0; padding: 7px 24px; list-style: none; }
+        .queue-item { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 74px; border-bottom: 1px solid var(--line); }
+        .queue-item:last-child { border-bottom: 0; }
+        .queue-num { display: grid; width: 38px; aspect-ratio: 1; place-items: center; border-radius: 50%; color: var(--green); background: var(--green-pale); font-size: 13px; font-weight: 800; }
+        .queue-details, .queue-actions, .queue-time-details { display: grid; gap: 4px; }
+        .queue-name { overflow: hidden; font-size: 14px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+        .queue-crop, .queue-position { color: var(--muted); font-size: 12px; }
+        .queue-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+        .queue-time-details { text-align: right; }
+        .queue-time { color: var(--green-dark); font-size: 12px; font-weight: 750; white-space: nowrap; }
+        .done-button[type="submit"] { display: inline-flex; align-items: center; justify-content: center; width: auto; min-height: 32px; padding: 6px 10px; border: 1px solid #b7c9b8; border-radius: 4px; color: var(--green-dark); background: var(--white); font: inherit; font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; cursor: pointer; }
+        .done-button[type="submit"]:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-pale); }
+        .empty { margin: 0; padding: 28px 24px; color: var(--muted); }
+        .completed-list summary { color: var(--green); font-size: 12px; font-weight: 750; cursor: pointer; list-style: none; }
+        .completed-list summary::-webkit-details-marker { display: none; }
+        .completed-list { border-top: 1px solid var(--line); padding: 14px 24px; }
+        .completed-list summary { display: flex; justify-content: space-between; color: var(--muted); }
+        .completed-list summary strong { color: var(--green); }
+        .completed-row { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+        .completed-row:last-child { border-bottom: 0; }
+        .completed-row strong { display: block; margin-bottom: 3px; }
+        .completed-row span { color: var(--muted); }
+        .completed-row .moved-badge { color: var(--green); font-weight: 700; }
+        .completed-empty { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
+        .booking { border-top: 4px solid var(--green); padding-bottom: 24px; }
+        .booking .panel-heading { border-bottom: 0; padding-bottom: 5px; }
+        .booking form { display: grid; gap: 16px; padding: 18px 24px 0; }
+        label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 700; }
+        input {
+            width: 100%;
+            min-height: 48px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5cb;
+            border-radius: 4px;
+            color: var(--ink);
+            background: #fbfcf9;
+            font: inherit;
+        }
+        input:focus { border-color: var(--green); outline: 3px solid #24583d24; }
+        select { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid #cbd5cb; border-radius: 4px; color: var(--ink); background: #fbfcf9; font: inherit; }
+        select:focus { border-color: var(--green); outline: 3px solid #24583d24; }
+        button[type="submit"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 50px;
+            padding: 0 17px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--white);
+            background: var(--green);
+            font: inherit;
+            font-weight: 750;
+            cursor: pointer;
+        }
+        button[type="submit"] span { color: var(--sun); font-size: 20px; transition: transform .18s ease; }
+        button[type="submit"]:hover { background: var(--green-dark); }
+        button[type="submit"]:hover span { transform: translateX(3px); }
+        .plant-picker { display: grid; gap: 9px; }
+        .plant-picker-label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; }
+        .plant-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+        .plant-option {
+            display: grid;
+            min-height: 68px;
+            place-content: center;
+            gap: 4px;
+            padding: 8px 4px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            color: var(--ink);
+            background: #fbfcf9;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .plant-option:hover, .plant-option[aria-pressed="true"] { border-color: var(--green); color: var(--green-dark); background: var(--green-pale); }
+        .plant-option:focus-visible { outline: 3px solid #24583d40; outline-offset: 2px; }
+        .plant-icon { font-size: 20px; line-height: 1; }
+        .field-label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 700; }
+        .notice { margin: 0 24px; padding: 12px 14px; border-left: 4px solid var(--green); background: var(--green-pale); font-size: 14px; }
+        .notice.success { border-color: var(--green); color: var(--green-dark); }
+        .notice.error { border-color: var(--red); color: var(--red); background: #fbefed; }
+        .footnote { margin: 17px 24px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        @media (max-width: 760px) {
+            .topbar { min-height: 66px; padding: 0 18px; }
+            .top-note { font-size: 10px; }
+            main { width: min(560px, calc(100% - 32px)); margin: 34px auto 48px; }
+            .intro { min-height: 330px; align-items: start; padding: 24px 20px 118px; margin-bottom: 22px; }
+            .intro-copy { width: 100%; }
+            .farmer-scene { top: auto; width: 100%; height: 105px; }
+            .farmer-scene::after { display: none; }
+            .farmer-character { bottom: 40px; font-size: 38px; }
+            @keyframes farmer-stroll { from { transform: translateX(0); } to { transform: translateX(54vw); } }
+            h1 { font-size: 34px; }
+            .market-status { min-width: 0; margin-top: 14px; }
+            .columns { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 390px) {
+            .brand { gap: 8px; font-size: 14px; }
+            .brand-mark { width: 32px; }
+            .top-note { max-width: 90px; text-align: right; }
+            h1 { font-size: 30px; }
+            .queue-item { grid-template-columns: 38px minmax(0, 1fr) auto; gap: 8px; }
+            .queue-num { width: 34px; }
+            .queue-name { max-width: 105px; font-size: 12px; }
+            .queue-crop, .queue-time { font-size: 10px; }
+            .queue-actions { gap: 5px; }
+            .queue-position { font-size: 10px; }
+            .done-button { padding: 3px 6px; font-size: 10px; }
+            .queue-heading-actions { gap: 8px; }
+            .panel-heading { padding-right: 16px; padding-left: 16px; }
+            .plant-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            main { animation: arrive .35s ease-out both; }
+            @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .farmer-character { animation: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>SustainaBytes Mandi</span></div>
+        <span class="top-note">Farmer queue and slot booking</span>
+    </header>
+
+    <main>
+        <section class="intro" aria-labelledby="page-title">
+            <div class="intro-copy">
+                <p class="eyebrow">Mandi queue / today</p>
+                <h1 id="page-title">Market day, <span>in order.</span></h1>
+                <p>Reserve a token and keep an eye on the arrivals.</p>
+                <div class="market-status">
+                    <span class="status-check" aria-hidden="true">&#10003;</span>
+                    <div><strong>Bookings are open</strong><small>{{ queue|length }} waiting in the queue</small></div>
+                </div>
+            </div>
+            <div class="farmer-scene" aria-hidden="true"><span class="farmer-character">&#129489;&#8205;&#127806;</span></div>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="notice {{ category }}" role="status">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="columns">
+            <section class="panel" aria-labelledby="queue-title">
+                <div class="panel-heading">
+                    <h2 id="queue-title">Live queue</h2>
+                    <div class="queue-heading-actions">
+                        <span class="queue-total"><strong>{{ queue|length }}</strong> waiting</span>
+                    </div>
+                </div>
+                <div class="current">
+                    <div>
+                        <p class="current-label">Next queue position</p>
+                        {% if active_token %}
+                            <p class="current-crop">{{ active_token.farmer_name }} / {{ active_token.crop }} / Token #{{ active_token.token_number }}</p>
+                        {% else %}
+                            <p class="current-crop">Queue position #1 is free</p>
+                        {% endif %}
+                    </div>
+                    <span class="token-number">{% if active_token %}#1{% else %}--{% endif %}</span>
+                </div>
+                {% if queue %}
+                    <ol class="queue-list">
+                        {% for token in queue %}
+                            <li class="queue-item">
+                                <span class="queue-num" aria-label="Queue position {{ loop.index }}">#{{ loop.index }}</span>
+                                <span class="queue-details">
+                                    <span class="queue-name">{{ token.farmer_name }}</span>
+                                    <span class="queue-crop">{{ token.crop }}</span>
+                                </span>
+                                <span class="queue-actions">
+                                    <span class="queue-time-details">
+                                        <span class="queue-time">{{ token.time_slot }}</span>
+                                        <span class="queue-position">Token #{{ token.token_number }}</span>
+                                    </span>
+                                    <form action="{{ url_for('complete_token', token_id=token.id) }}" method="post">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button class="done-button" type="submit" aria-label="Mark {{ token.farmer_name }} moved and free queue position {{ loop.index }}">Mark moved</button>
+                                    </form>
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p class="empty">All queue positions are free. The next booking starts at #1.</p>
+                {% endif %}
+                <details class="completed-list">
+                    <summary><span>Completed tokens</span><strong>{{ completed_count }}</strong></summary>
+                    {% if completed_queue %}
+                        {% for token in completed_queue %}
+                            <div class="completed-row">
+                                <div><strong>{{ token.farmer_name }}</strong><span>{{ token.crop }} / {{ token.time_slot }}</span></div>
+                                <span class="moved-badge">Moved / Token #{{ token.token_number }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="completed-empty">Completed tokens will appear here.</p>
+                    {% endif %}
+                </details>
+            </section>
+
+            <section class="panel booking" aria-labelledby="booking-title">
+                <div class="panel-heading"><h2 id="booking-title">Book a mandi slot</h2></div>
+                <form action="{{ url_for('book_slot') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div>
+                        <label for="farmer_name">Farmer name</label>
+                        <input id="farmer_name" name="farmer_name" type="text" maxlength="100" autocomplete="name" placeholder="Enter your name" required>
+                    </div>
+                    <div>
+                        <label for="phone">Phone number</label>
+                        <input id="phone" name="phone" type="tel" maxlength="15" autocomplete="tel" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div>
+                        <label for="time_slot">Appointment time</label>
+                        <select id="time_slot" name="time_slot" required>
+                            <option value="" disabled selected>Select a time slot</option>
+                            {% for slot in time_slots %}
+                                <option value="{{ slot }}">{{ slot }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="crop">Crop type</label>
+                        <div class="plant-picker">
+                            <p class="plant-picker-label">Choose a crop or type one below</p>
+                            <div class="plant-options" role="group" aria-label="Popular crops">
+                                <button class="plant-option" type="button" data-crop="Wheat" aria-pressed="false"><span class="plant-icon" aria-hidden="true">&#127806;</span>Wheat</button>
+                                <button class="plant-option" type="button" data-crop="Rice" aria-pressed="false"><span class="plant-icon" aria-hidden="true">&#127807;</span>Rice</button>
+                                <button class="plant-option" type="button" data-crop="Millets" aria-pressed="false"><span class="plant-icon" aria-hidden="true">&#127793;</span>Millets</button>
+                                <button class="plant-option" type="button" data-crop="Pulses" aria-pressed="false"><span class="plant-icon" aria-hidden="true">&#127811;</span>Pulses</button>
+                            </div>
+                        </div>
+                        <input id="crop" name="crop" type="text" maxlength="50" placeholder="Type a crop, such as tomatoes" required>
+                    </div>
+                    <button type="submit">Reserve my token <span aria-hidden="true">&#8594;</span></button>
+                </form>
+                <p class="footnote">Your phone number is used only for your booking confirmation and is not shown in the public queue.</p>
+            </section>
+        </div>
+    </main>
+    <script>
+        const cropInput = document.getElementById('crop');
+        const plantOptions = document.querySelectorAll('.plant-option');
+
+        plantOptions.forEach((option) => {
+            option.addEventListener('click', () => {
+                cropInput.value = option.dataset.crop;
+                plantOptions.forEach((item) => {
+                    item.setAttribute('aria-pressed', String(item === option));
+                });
+                cropInput.focus();
+            });
+        });
+
+        cropInput.addEventListener('input', () => {
+            plantOptions.forEach((option) => {
+                const isSelected = option.dataset.crop.toLowerCase() === cropInput.value.trim().toLowerCase();
+                option.setAttribute('aria-pressed', String(isSelected));
+            });
+        });
+    </script>
+</body>
+</html>
